@@ -3,327 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky to Spin - Completely Free P2P Edition</title>
-    <style>
-        :root {
-            --primary: #ffd700;
-            --secondary: #ff3366;
-            --dark: #0f051d;
-            --light: #ffffff;
-            --ai-bg-1: #120626;
-            --ai-bg-2: #2d0b5a;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--ai-bg-1), var(--ai-bg-2));
-            transition: background 2s ease-in-out;
-            color: var(--light);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1.5rem;
-            overflow-x: hidden;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 1rem;
-            z-index: 2;
-        }
-
-        h1 {
-            font-size: 3rem;
-            color: var(--primary);
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        /* 3-Tier Layout Side-by-Side Grid */
-        .main-stage {
-            display: flex;
-            gap: 2rem;
-            width: 100%;
-            max-width: 1400px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .tiers-container {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            flex: 3;
-        }
-
-        .tier-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.4);
-            min-width: 320px;
-            max-width: 360px;
-        }
-
-        .tier-title {
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        #tier-1 .tier-title { color: #00ffcc; }
-        #tier-2 .tier-title { color: #ff00ff; }
-        #tier-3 .tier-title { color: #ffaa00; }
-
-        .wheel-outer {
-            position: relative;
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            border: 10px solid var(--primary);
-        }
-
-        .wheel-pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 25px solid var(--secondary);
-            z-index: 10;
-        }
-
-        .wheel-canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
-        }
-
-        .spin-btn {
-            background: linear-gradient(135deg, #ff3366 0%, #cc0044 100%);
-            color: white;
-            border: none;
-            padding: 0.8rem 2.5rem;
-            font-size: 1.25rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-        }
-
-        .spin-btn:disabled {
-            background: #444;
-            color: #888;
-            cursor: not-allowed;
-        }
-
-        .result-box-container {
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .clickable-prize-box {
-            display: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #fff;
-            cursor: pointer;
-            border: 2px solid #fff;
-            text-transform: uppercase;
-            text-align: center;
-        }
-
-        /* LIVE COMMENTS SIDEBAR (Completely Free P2P) */
-        .comments-sidebar {
-            flex: 1;
-            min-width: 300px;
-            max-width: 380px;
-            background: rgba(15, 5, 29, 0.6);
-            border-radius: 24px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            display: flex;
-            flex-direction: column;
-            height: 600px;
-            padding: 1rem;
-        }
-
-        .comments-header {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-transform: uppercase;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .p2p-setup {
-            font-size: 0.8rem;
-            background: rgba(255,255,255,0.05);
-            padding: 0.5rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-        }
-
-        .p2p-setup input {
-            width: 100%;
-            background: #22143d;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
-            padding: 0.3rem;
-            margin-top: 0.3rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-        }
-
-        .p2p-setup button {
-            background: var(--secondary);
-            color: #fff;
-            border: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 0.3rem;
-            font-weight: bold;
-        }
-
-        .comments-stream {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding-right: 0.3rem;
-        }
-
-        .comment-bubble {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 0.6rem 0.8rem;
-            border-radius: 12px;
-            border-left: 3px solid var(--secondary);
-            font-size: 0.95rem;
-            animation: slideIn 0.2s ease forwards;
-        }
-
-        .comment-user {
-            font-weight: bold;
-            color: #00ffcc;
-            font-size: 0.8rem;
-            margin-bottom: 0.2rem;
-        }
-
-        .comment-input-area {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 0.5rem;
-        }
-
-        .comment-input-area input {
-            flex: 1;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            padding: 0.5rem;
-            color: #fff;
-        }
-
-        .comment-input-area button {
-            background: #00ffcc;
-            color: #000;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Modal Reveal Window */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 100;
-        }
-
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-
-        .modal-card {
-            background: #1f1137;
-            border: 3px solid var(--primary);
-            padding: 2.5rem;
-            border-radius: 20px;
-            max-width: 450px;
-            width: 90%;
-            text-align: center;
-        }
-
-        .modal-title {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-        }
-
-        .prize-image-placeholder {
-            width: 100%;
-            height: 220px;
-            background: #2d1b4e;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-
-        .prize-image-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-        .close-modal-btn { background: #ff3366; color: white; border: none; padding: 0.7rem 2rem; border-radius: 8px; cursor: pointer; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <title>Lucky to Spin - 3 Tier Live Show</title>
 </head>
 <body>
 
@@ -374,17 +54,16 @@
             <div class="comments-header">Live Comments</div>
             
             <div class="p2p-setup">
-                <div style="font-weight: bold; margin-bottom: 2px;">Host Network Sync (No Server, Free):</div>
-                <label id="p2p-role-status">Mode: Local Player</label>
+                <div style="font-weight: bold; margin-bottom: 2px;">Sync Options (No Fees):</div>
+                <label id="p2p-role-status">Mode: Local Studio</label>
                 <div id="host-controls">
-                    <button onclick="initHost()">Act as Stream Host</button>
-                    <button onclick="showJoinField()">Join Host's Stream</button>
+                    <button onclick="initHost()">Host Mode</button>
+                    <button onclick="showJoinField()">Viewer Join</button>
                 </div>
                 <div id="p2p-io-area" style="display:none; margin-top: 5px;">
-                    <div id="p2p-instruction">Copy this code and give it to your viewers:</div>
                     <input type="text" id="p2p-code-box" readonly onclick="this.select()">
                     <div id="client-connect-area" style="display:none; margin-top:5px;">
-                        <input type="text" id="p2p-input-code" placeholder="Paste Host code here...">
+                        <input type="text" id="p2p-input-code" placeholder="Paste network string here...">
                         <button onclick="connectToHost()">Connect</button>
                     </div>
                 </div>
@@ -393,13 +72,13 @@
             <div class="comments-stream" id="chat-stream">
                 <div class="comment-bubble">
                     <div class="comment-user">System</div>
-                    Welcome to the chat! Spin wheels or connect using P2P sync.
+                    Welcome to the stage! Spin to test your luck.
                 </div>
             </div>
 
             <div class="comment-input-area">
-                <input type="text" id="chat-username" placeholder="Name" style="width: 60px; flex: none;">
-                <input type="text" id="chat-msg" placeholder="Type a comment..." onkeydown="if(event.key==='Enter') sendComment()">
+                <input type="text" id="chat-username" placeholder="User" style="width: 60px; flex: none;">
+                <input type="text" id="chat-msg" placeholder="Send a message..." onkeydown="if(event.key==='Enter') sendComment()">
                 <button onclick="sendComment()">Send</button>
             </div>
         </div>
@@ -407,261 +86,547 @@
 
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-card">
-            <div class="modal-title" id="modal-prize-title">You Won!</div>
+            <div class="modal-title" id="modal-prize-title">Winner!</div>
             <div class="prize-image-placeholder" id="modal-image-container"></div>
             <button class="close-modal-btn" onclick="closeModal()">Close</button>
         </div>
     </div>
 
-    <script>
-        const SLICES = 16;
-        const sliceAngle = (2 * Math.PI) / SLICES;
-
-        const tierPalettes = {
-            1: ["#1e293b", "#0f172a", "#0284c7", "#0369a1"],
-            2: ["#4c1d95", "#3b0764", "#db2777", "#be185d"],
-            3: ["#064e3b", "#022c22", "#059669", "#047857"]
-        };
-
-        const state = {
-            1: { rotation: 0, lastIndex: null, isSpinning: false },
-            2: { rotation: 0, lastIndex: null, isSpinning: false },
-            3: { rotation: 0, lastIndex: null, isSpinning: false }
-        };
-
-        // Live Prize Inventory object mapping derived from your Google Sheet data keys
-        let livePrizeData = {};
-
-        function getWedgeColor(tier, index) {
-            if (index === 0) return "#ffd700"; 
-            const palette = tierPalettes[tier];
-            return palette[index % palette.length];
-        }
-
-        function drawWheel(tierId) {
-            const canvas = document.getElementById(`wheel-canvas-${tierId}`);
-            const ctx = canvas.getContext("2d");
-            const center = canvas.width / 2;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < SLICES; i++) {
-                const angle = i * sliceAngle;
-                ctx.beginPath();
-                ctx.fillStyle = getWedgeColor(tierId, i);
-                ctx.moveTo(center, center);
-                ctx.arc(center, center, center, angle, angle + sliceAngle);
-                ctx.lineTo(center, center);
-                ctx.fill();
-
-                if (i === 0) {
-                    ctx.save();
-                    ctx.translate(center, center);
-                    ctx.rotate(angle + sliceAngle / 2);
-                    ctx.textAlign = "right";
-                    ctx.fillStyle = "#000000";
-                    ctx.font = "bold 10px Arial";
-                    ctx.fillText("SPIN AGAIN", center - 15, 3);
-                    ctx.restore();
-                }
-            }
-
-            for (let i = 0; i < SLICES; i++) {
-                if (i % 4 === 0) {
-                    const angle = i * sliceAngle;
-                    ctx.beginPath();
-                    ctx.strokeStyle = "#000000";
-                    ctx.lineWidth = 4;
-                    ctx.moveTo(center, center);
-                    ctx.lineTo(center + center * Math.cos(angle), center + center * Math.sin(angle));
-                    ctx.stroke();
-                }
-            }
-        }
-
-        // --- 1. LOCAL ALGORITHMIC PATTERN GENERATOR (AI REPLACEMENT) ---
-        // Completely local sine matrix updates the background spectrum on a loop without library files
-        let aiSeed = 0;
-        function processBackgroundAI() {
-            aiSeed += 0.02;
-            const r1 = Math.floor(15 + 10 * Math.sin(aiSeed));
-            const g1 = Math.floor(8 + 5 * Math.cos(aiSeed * 1.5));
-            const b1 = Math.floor(40 + 15 * Math.sin(aiSeed * 0.8));
-            
-            const r2 = Math.floor(45 + 20 * Math.cos(aiSeed * 0.5));
-            const g2 = Math.floor(10 + 8 * Math.sin(aiSeed * 1.2));
-            const b2 = Math.floor(90 + 30 * Math.cos(aiSeed));
-
-            document.documentElement.style.setProperty('--ai-bg-1', `rgb(${r1}, ${g1}, ${b1})`);
-            document.documentElement.style.setProperty('--ai-bg-2', `rgb(${r2}, ${g2}, ${b2})`);
-            requestAnimationFrame(processBackgroundAI);
-        }
-        processBackgroundAI();
-
-        // --- 2. GOOGLE SHEETS LIVE CONFIGURATION ASSETS DATA SYNC ---
-        // Add your Apps Script url directly here to run your inventory live for free
-        const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
-        async function fetchSheetData() {
-            if(!SCRIPT_URL || SCRIPT_URL.includes("YOUR_G")) return;
-            try {
-                const res = await fetch(SCRIPT_URL);
-                livePrizeData = await res.json();
-            } catch(e) { console.log("Offline Mode: Using Local Fallbacks."); }
-        }
-        fetchSheetData();
-
-        function spinTier(tierId) {
-            if (state[tierId].isSpinning) return;
-            state[tierId].isSpinning = true;
-            document.getElementById(`btn-${tierId}`).disabled = true;
-            document.getElementById(`prize-box-${tierId}`).style.display = "none";
-
-            const winningIndex = Math.floor(Math.random() * SLICES);
-            state[tierId].lastIndex = winningIndex;
-
-            const targetAngle = (winningIndex * sliceAngle) + (sliceAngle / 2);
-            const stopAngle = (3 * Math.PI / 2) - targetAngle;
-            state[tierId].rotation = stopAngle + (6 * 2 * Math.PI);
-
-            const wheelCanvas = document.getElementById(`wheel-canvas-${tierId}`);
-            wheelCanvas.style.transform = `rotate(${state[tierId].rotation}rad)`;
-
-            setTimeout(() => {
-                state[tierId].isSpinning = false;
-                document.getElementById(`btn-${tierId}`).disabled = false;
-
-                const colorMatched = getWedgeColor(tierId, winningIndex);
-                const prizeBox = document.getElementById(`prize-box-${tierId}`);
-                
-                prizeBox.style.backgroundColor = colorMatched;
-                prizeBox.style.color = (winningIndex === 0) ? "#000" : "#fff";
-                prizeBox.style.display = "block";
-                prizeBox.innerText = winningIndex === 0 ? "✨ Spin Again! ✨" : "🎁 View Prize! 🎁";
-            }, 4000);
-        }
-
-        function openPrizeModal(tierId) {
-            const index = state[tierId].lastIndex;
-            const overlay = document.getElementById("modal-overlay");
-            const title = document.getElementById("modal-prize-title");
-            const imgContainer = document.getElementById("modal-image-container");
-
-            if (index === 0) {
-                title.innerText = "Bonus Turn!";
-                imgContainer.innerHTML = `<span style="font-size: 4rem;">🔄</span>`;
-                overlay.classList.add("active");
-                return;
-            }
-
-            let itemName = `Tier ${tierId} - Item #${index}`;
-            let itemImg = "";
-
-            const lookupKey = `T${tierId}_S${index}`;
-            if (livePrizeData[lookupKey]) {
-                itemName = livePrizeData[lookupKey].name;
-                itemImg = livePrizeData[lookupKey].image;
-            }
-
-            title.innerText = itemName;
-            imgContainer.innerHTML = itemImg ? `<img src="${itemImg}">` : `<span>[ Image Reveal ]</span>`;
-            overlay.classList.add("active");
-        }
-
-        function closeModal() { document.getElementById("modal-overlay").classList.remove("active"); }
-
-        // --- 3. COMPLETELY FREE PEER-TO-PEER (WEBRTC) COMMENT PROTOCOLS ---
-        let localConnection;
-        let dataChannel;
-        let p2pMode = "none"; 
-
-        function appendComment(user, message) {
-            const stream = document.getElementById("chat-stream");
-            const bubble = document.createElement("div");
-            bubble.className = "comment-bubble";
-            bubble.innerHTML = `<div class="comment-user">${escapeHTML(user)}</div><div>${escapeHTML(message)}</div>`;
-            stream.appendChild(bubble);
-            stream.scrollTop = stream.scrollHeight;
-        }
-
-        function sendComment() {
-            const nameInp = document.getElementById("chat-username");
-            const msgInp = document.getElementById("chat-msg");
-            const name = nameInp.value.trim() || "User";
-            const msg = msgInp.value.trim();
-            if(!msg) return;
-
-            appendComment(name, msg);
-            
-            if(dataChannel && dataChannel.readyState === "open") {
-                dataChannel.send(JSON.stringify({user: name, message: msg}));
-            }
-            msgInp.value = "";
-        }
-
-        // WebRTC Connection Setup logic (Host Creates, Client Joins)
-        async function initHost() {
-            p2pMode = "host";
-            document.getElementById("p2p-role-status").innerText = "Mode: Host Studio";
-            document.getElementById("host-controls").style.display = "none";
-            document.getElementById("p2p-io-area").style.display = "block";
-            
-            localConnection = new RTCPeerConnection();
-            dataChannel = localConnection.createDataChannel("chatChannel");
-            
-            dataChannel.onmessage = e => {
-                const data = JSON.parse(e.data);
-                appendComment(data.user, data.message);
-            };
-
-            localConnection.onicecandidate = e => {
-                if (!e.candidate) {
-                    // Once signaling collection completes, generate the sync token string mapping 
-                    document.getElementById("p2p-code-box").value = btoa(JSON.stringify(localConnection.localDescription));
-                }
-            };
-
-            const offer = await localConnection.createOffer();
-            await localConnection.setLocalDescription(offer);
-        }
-
-        function showJoinField() {
-            document.getElementById("host-controls").style.display = "none";
-            document.getElementById("p2p-io-area").style.display = "block";
-            document.getElementById("p2p-instruction").innerText = "Paste Host's Connection Code below:";
-            document.getElementById("p2p-code-box").style.display = "none";
-            document.getElementById("client-connect-area").style.display = "block";
-        }
-
-        async function connectToHost() {
-            p2pMode = "client";
-            document.getElementById("p2p-role-status").innerText = "Mode: Connected Viewer";
-            const rawCode = document.getElementById("p2p-input-code").value.trim();
-            if(!rawCode) return;
-
-            const parsedOffer = JSON.parse(atob(rawCode));
-            localConnection = new RTCPeerConnection();
-
-            localConnection.ondatachannel = e => {
-                dataChannel = e.channel;
-                dataChannel.onmessage = ev => {
-                    const data = JSON.parse(ev.data);
-                    appendComment(data.user, data.message);
-                };
-            };
-
-            await localConnection.setRemoteDescription(parsedOffer);
-            const answer = await localConnection.createAnswer();
-            await localConnection.setLocalDescription(answer);
-            
-            // Show return answer key briefly if host needs handshake tracking response back
-            alert("Connected successfully to P2P Matrix!");
-            document.getElementById("client-connect-area").style.display = "none";
-        }
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
-        }
-
-        // Initialize Wheels
-        drawWheel(1); drawWheel(2); drawWheel(3);
-    </script>
 </body>
 </html>
+<style>
+    :root {
+        --primary: #ffd700;
+        --secondary: #ff3366;
+        --dark: #070210;
+        --light: #ffffff;
+        --neon-cyan: #00f3ff;
+        --neon-magenta: #ff0055;
+    }
+
+    body {
+        background-color: var(--dark);
+        background-image: 
+            radial-gradient(circle at 50% 30%, rgba(33, 13, 61, 0.6) 0%, rgba(7, 2, 16, 0.95) 70%),
+            linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.8) 100%),
+            repeating-linear-gradient(90deg, rgba(255, 0, 85, 0.03) 0px, rgba(255, 0, 85, 0.03) 1px, transparent 1px, transparent 40px),
+            repeating-linear-gradient(0deg, rgba(255, 0, 85, 0.03) 0px, rgba(255, 0, 85, 0.03) 1px, transparent 1px, transparent 40px),
+            radial-gradient(rgba(255, 215, 0, 0.02) 15%, transparent 16%);
+        background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px, 20px 20px;
+        color: var(--light);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 1.5rem;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: 
+            linear-gradient(115deg, transparent 40%, rgba(0, 243, 255, 0.08) 45%, rgba(0, 243, 255, 0.15) 50%, rgba(0, 243, 255, 0.08) 55%, transparent 60%),
+            linear-gradient(245deg, transparent 40%, rgba(255, 0, 85, 0.08) 45%, rgba(255, 0, 85, 0.15) 50%, rgba(255, 0, 85, 0.08) 55%, transparent 60%);
+        z-index: 1;
+        pointer-events: none;
+        animation: spotlightSweep 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes spotlightSweep {
+        0% { opacity: 0.3; transform: scale(1) rotate(-5deg); }
+        50% { opacity: 0.8; transform: scale(1.1) rotate(5deg); }
+        100% { opacity: 0.3; transform: scale(1) rotate(-5deg); }
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        z-index: 2;
+    }
+
+    h1 {
+        font-size: 3.5rem;
+        color: var(--primary);
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 0, 85, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        font-weight: 900;
+    }
+
+    .main-stage {
+        display: flex;
+        gap: 2rem;
+        width: 100%;
+        max-width: 1400px;
+        justify-content: center;
+        flex-wrap: wrap;
+        z-index: 2;
+    }
+
+    .tiers-container {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        flex: 3;
+    }
+
+    .tier-card {
+        background: rgba(15, 7, 32, 0.65);
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,255,255,0.03);
+        min-width: 320px;
+        max-width: 360px;
+        transition: all 0.3s ease;
+    }
+
+    #tier-1 { border-top: 4px solid var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.1), 0 20px 50px rgba(0,0,0,0.6); }
+    #tier-2 { border-top: 4px solid var(--neon-magenta); box-shadow: 0 0 15px rgba(255, 0, 85, 0.1), 0 20px 50px rgba(0,0,0,0.6); }
+    #tier-3 { border-top: 4px solid var(--primary); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1), 0 20px 50px rgba(0,0,0,0.6); }
+
+    .tier-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    #tier-1 .tier-title { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
+    #tier-2 .tier-title { color: var(--neon-magenta); text-shadow: 0 0 10px rgba(255, 0, 85, 0.4); }
+    #tier-3 .tier-title { color: var(--primary); text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+
+    .wheel-outer {
+        position: relative;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        border: 10px solid var(--primary);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .wheel-pointer {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 25px solid var(--secondary);
+        z-index: 10;
+    }
+
+    .wheel-canvas {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
+    }
+
+    .spin-btn {
+        background: linear-gradient(135deg, #ff3366 0%, #cc0044 100%);
+        color: white;
+        border: none;
+        padding: 0.8rem 2.5rem;
+        font-size: 1.25rem;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(255, 51, 102, 0.3);
+        transition: transform 0.2s;
+        text-transform: uppercase;
+    }
+
+    .spin-btn:hover { transform: scale(1.05); }
+    .spin-btn:disabled { background: #444; color: #888; cursor: not-allowed; box-shadow: none; }
+
+    .result-box-container {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .clickable-prize-box {
+        display: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #fff;
+        cursor: pointer;
+        border: 2px solid #fff;
+        text-transform: uppercase;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    .comments-sidebar {
+        flex: 1;
+        min-width: 300px;
+        max-width: 380px;
+        background: rgba(10, 4, 22, 0.75);
+        border-radius: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(16px);
+        display: flex;
+        flex-direction: column;
+        height: 600px;
+        padding: 1rem;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    .comments-header {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--primary);
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+    }
+
+    .p2p-setup {
+        font-size: 0.8rem;
+        background: rgba(255,255,255,0.03);
+        padding: 0.6rem;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .p2p-setup input {
+        width: 100%;
+        background: #140b24;
+        border: 1px solid rgba(255,255,255,0.15);
+        color: #fff;
+        padding: 0.4rem;
+        margin-top: 0.3rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+    }
+
+    .p2p-setup button {
+        background: var(--secondary);
+        color: #fff;
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 0.4rem;
+        font-weight: bold;
+    }
+
+    .comments-stream {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-right: 0.3rem;
+    }
+
+    .comment-bubble {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.6rem 0.8rem;
+        border-radius: 12px;
+        border-left: 3px solid var(--secondary);
+        font-size: 0.95rem;
+    }
+
+    .comment-user {
+        font-weight: bold;
+        color: var(--neon-cyan);
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .comment-input-area {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 0.5rem;
+    }
+
+    .comment-input-area input {
+        flex: 1;
+        background: rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 8px;
+        padding: 0.5rem;
+        color: #fff;
+    }
+
+    .comment-input-area button {
+        background: var(--neon-cyan);
+        color: #000;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 100;
+    }
+
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-card { background: #130924; border: 3px solid var(--primary); padding: 2.5rem; border-radius: 24px; max-width: 450px; width: 90%; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.8); }
+    .modal-title { font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem; text-transform: uppercase; font-weight: 800; }
+    .prize-image-placeholder { width: 100%; height: 220px; background: #20123a; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+    .prize-image-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+    .close-modal-btn { background: var(--secondary); color: white; border: none; padding: 0.7rem 2rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
+                 </style>
+                 <script>
+    const SLICES = 16;
+    const sliceAngle = (2 * Math.PI) / SLICES;
+
+    const tierPalettes = {
+        1: ["#111827", "#1f2937", "#0ea5e9", "#0284c7"],
+        2: ["#3b0764", "#581c87", "#ec4899", "#d946ef"],
+        3: ["#022c22", "#064e3b", "#10b981", "#059669"]
+    };
+
+    const state = {
+        1: { rotation: 0, lastIndex: null, isSpinning: false },
+        2: { rotation: 0, lastIndex: null, isSpinning: false },
+        3: { rotation: 0, lastIndex: null, isSpinning: false }
+    };
+
+    let livePrizeData = {};
+
+    function getWedgeColor(tier, index) {
+        if (index === 0) return "#ffd700"; 
+        const palette = tierPalettes[tier];
+        return palette[index % palette.length];
+    }
+
+    function drawWheel(tierId) {
+        const canvas = document.getElementById(`wheel-canvas-${tierId}`);
+        const ctx = canvas.getContext("2d");
+        const center = canvas.width / 2;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < SLICES; i++) {
+            const angle = i * sliceAngle;
+            ctx.beginPath();
+            ctx.fillStyle = getWedgeColor(tierId, i);
+            ctx.moveTo(center, center);
+            ctx.arc(center, center, center, angle, angle + sliceAngle);
+            ctx.lineTo(center, center);
+            ctx.fill();
+
+            if (i === 0) {
+                ctx.save();
+                ctx.translate(center, center);
+                ctx.rotate(angle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#000000";
+                ctx.font = "bold 10px Arial";
+                ctx.fillText("SPIN AGAIN", center - 15, 3);
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < SLICES; i++) {
+            if (i % 4 === 0) {
+                const angle = i * sliceAngle;
+                ctx.beginPath();
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 4;
+                ctx.moveTo(center, center);
+                ctx.lineTo(center + center * Math.cos(angle), center + center * Math.sin(angle));
+                ctx.stroke();
+            }
+        }
+    }
+
+    // paste your real deployment link right here inside the quotes below!
+    const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+    async function fetchSheetData() {
+        if(!SCRIPT_URL || SCRIPT_URL.includes("YOUR_G")) return;
+        try {
+            const res = await fetch(SCRIPT_URL);
+            livePrizeData = await res.json();
+        } catch(e) { console.log("Using Local System Fallbacks."); }
+    }
+    fetchSheetData();
+
+    function spinTier(tierId) {
+        if (state[tierId].isSpinning) return;
+        state[tierId].isSpinning = true;
+        document.getElementById(`btn-${tierId}`).disabled = true;
+        document.getElementById(`prize-box-${tierId}`).style.display = "none";
+
+        const winningIndex = Math.floor(Math.random() * SLICES);
+        state[tierId].lastIndex = winningIndex;
+
+        const targetAngle = (winningIndex * sliceAngle) + (sliceAngle / 2);
+        const stopAngle = (3 * Math.PI / 2) - targetAngle;
+        state[tierId].rotation = stopAngle + (6 * 2 * Math.PI);
+
+        const wheelCanvas = document.getElementById(`wheel-canvas-${tierId}`);
+        wheelCanvas.style.transform = `rotate(${state[tierId].rotation}rad)`;
+
+        setTimeout(() => {
+            state[tierId].isSpinning = false;
+            document.getElementById(`btn-${tierId}`).disabled = false;
+
+            const colorMatched = getWedgeColor(tierId, winningIndex);
+            const prizeBox = document.getElementById(`prize-box-${tierId}`);
+            
+            prizeBox.style.backgroundColor = colorMatched;
+            prizeBox.style.color = (winningIndex === 0) ? "#000" : "#fff";
+            prizeBox.style.display = "block";
+            prizeBox.innerText = winningIndex === 0 ? "✨ Spin Again! ✨" : "🎁 View Prize! 🎁";
+        }, 4000);
+    }
+
+    function openPrizeModal(tierId) {
+        const index = state[tierId].lastIndex;
+        const overlay = document.getElementById("modal-overlay");
+        const title = document.getElementById("modal-prize-title");
+        const imgContainer = document.getElementById("modal-image-container");
+
+        if (index === 0) {
+            title.innerText = "Bonus Turn!";
+            imgContainer.innerHTML = `<span style="font-size: 4rem;">🔄</span>`;
+            overlay.classList.add("active");
+            return;
+        }
+
+        let itemName = `Tier ${tierId} - Item #${index}`;
+        let itemImg = "";
+
+        const lookupKey = `T${tierId}_S${index}`;
+        if (livePrizeData[lookupKey]) {
+            itemName = livePrizeData[lookupKey].name;
+            itemImg = livePrizeData[lookupKey].image;
+        }
+
+        title.innerText = itemName;
+        imgContainer.innerHTML = itemImg ? `<img src="${itemImg}">` : `<span>[ No Image Provided ]</span>`;
+        overlay.classList.add("active");
+    }
+
+    function closeModal() { document.getElementById("modal-overlay").classList.remove("active"); }
+
+    // --- P2P COMMENT SYSTEM (WEBRTC) ---
+    let localConnection, dataChannel;
+
+    function appendComment(user, message) {
+        const stream = document.getElementById("chat-stream");
+        const bubble = document.createElement("div");
+        bubble.className = "comment-bubble";
+        bubble.innerHTML = `<div class="comment-user">${escapeHTML(user)}</div><div>${escapeHTML(message)}</div>`;
+        stream.appendChild(bubble);
+        stream.scrollTop = stream.scrollHeight;
+    }
+
+    function sendComment() {
+        const nameInp = document.getElementById("chat-username");
+        const msgInp = document.getElementById("chat-msg");
+        const name = nameInp.value.trim() || "User";
+        const msg = msgInp.value.trim();
+        if(!msg) return;
+
+        appendComment(name, msg);
+        if(dataChannel && dataChannel.readyState === "open") {
+            dataChannel.send(JSON.stringify({user: name, message: msg}));
+        }
+        msgInp.value = "";
+    }
+
+    async function initHost() {
+        document.getElementById("p2p-role-status").innerText = "Mode: Studio Host";
+        document.getElementById("host-controls").style.display = "none";
+        document.getElementById("p2p-io-area").style.display = "block";
+        
+        localConnection = new RTCPeerConnection();
+        dataChannel = localConnection.createDataChannel("chatChannel");
+        dataChannel.onmessage = e => { const data = JSON.parse(e.data); appendComment(data.user, data.message); };
+        localConnection.onicecandidate = e => {
+            if (!e.candidate) document.getElementById("p2p-code-box").value = btoa(JSON.stringify(localConnection.localDescription));
+        };
+        const offer = await localConnection.createOffer();
+        await localConnection.setLocalDescription(offer);
+    }
+
+    function showJoinField() {
+        document.getElementById("host-controls").style.display = "none";
+        document.getElementById("p2p-io-area").style.display = "block";
+        document.getElementById("p2p-code-box").style.display = "none";
+        document.getElementById("client-connect-area").style.display = "block";
+    }
+
+    async function connectToHost() {
+        document.getElementById("p2p-role-status").innerText = "Mode: Viewer Sync";
+        const rawCode = document.getElementById("p2p-input-code").value.trim();
+        if(!rawCode) return;
+        const parsedOffer = JSON.parse(atob(rawCode));
+        localConnection = new RTCPeerConnection();
+        localConnection.ondatachannel = e => {
+            dataChannel = e.channel;
+            dataChannel.onmessage = ev => { const data = JSON.parse(ev.data); appendComment(data.user, data.message); };
+        };
+        await localConnection.setRemoteDescription(parsedOffer);
+        const answer = await localConnection.createAnswer();
+        await localConnection.setLocalDescription(answer);
+        document.getElementById("client-connect-area").style.display = "none";
+    }
+
+    function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
+
+    drawWheel(1); drawWheel(2); drawWheel(3);
+                                </script>
+                                function doGet() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var result = {};
+  
+  // Loops past your header labels down across the spreadsheet entries
+  for (var i = 1; i < data.length; i++) {
+    var id = data[i][0];        // Column A (Ex: T1_S5)
+    var name = data[i][1];      // Column B (Ex: $100 Gift Card)
+    var imageUrl = data[i][2];  // Column C (Ex: https://imageurl.jpg)
+    
+    if (id) {
+      result[id] = {
+        name: name,
+        image: imageUrl
+      };
+    }
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+      </body>
+  </html>
+      
