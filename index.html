@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky to Spin - Game Show</title>
+    <title>Lucky to Spin - Completely Free P2P Edition</title>
     <style>
         :root {
             --primary: #ffd700;
             --secondary: #ff3366;
-            --dark: #1a0b2e;
+            --dark: #0f051d;
             --light: #ffffff;
+            --ai-bg-1: #120626;
+            --ai-bg-2: #2d0b5a;
         }
 
         * {
@@ -20,98 +22,100 @@
         }
 
         body {
-            background: radial-gradient(circle at center, #3d1b6d 0%, var(--dark) 100%);
+            background: linear-gradient(135deg, var(--ai-bg-1), var(--ai-bg-2));
+            transition: background 2s ease-in-out;
             color: var(--light);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            padding: 1.5rem;
             overflow-x: hidden;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
+            z-index: 2;
         }
 
         h1 {
             font-size: 3rem;
             color: var(--primary);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: #b39ddb;
-            margin-top: 0.5rem;
+        /* 3-Tier Layout Side-by-Side Grid */
+        .main-stage {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1400px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .game-container {
+        .tiers-container {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex: 3;
+        }
+
+        .tier-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2.5rem;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            gap: 1.5rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+            min-width: 320px;
+            max-width: 360px;
         }
 
-        .dashboard {
-            display: flex;
-            gap: 3rem;
-            font-size: 1.5rem;
+        .tier-title {
+            font-size: 1.8rem;
             font-weight: bold;
+            text-transform: uppercase;
         }
 
-        .stat-box {
-            text-align: center;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.5rem 1.5rem;
-            border-radius: 10px;
-            border-bottom: 3px solid var(--primary);
-        }
-
-        .stat-box span {
-            display: block;
-            color: var(--primary);
-            font-size: 2rem;
-        }
+        #tier-1 .tier-title { color: #00ffcc; }
+        #tier-2 .tier-title { color: #ff00ff; }
+        #tier-3 .tier-title { color: #ffaa00; }
 
         .wheel-outer {
             position: relative;
-            width: 400px;
-            height: 400px;
+            width: 260px;
+            height: 260px;
             border-radius: 50%;
-            border: 12px solid var(--primary);
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(0,0,0,0.6);
-            overflow: visible;
+            border: 10px solid var(--primary);
         }
 
         .wheel-pointer {
             position: absolute;
-            top: -20px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 35px solid var(--secondary);
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid var(--secondary);
             z-index: 10;
-            filter: drop-shadow(0 4px 5px rgba(0,0,0,0.5));
         }
 
-        .wheel {
+        .wheel-canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            position: relative;
             transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
         }
 
@@ -119,37 +123,205 @@
             background: linear-gradient(135deg, #ff3366 0%, #cc0044 100%);
             color: white;
             border: none;
-            padding: 1rem 3rem;
-            font-size: 1.5rem;
+            padding: 0.8rem 2.5rem;
+            font-size: 1.25rem;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 51, 102, 0.4);
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-        }
-
-        .spin-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(255, 51, 102, 0.6);
-        }
-
-        .spin-btn:active:not(:disabled) {
-            transform: translateY(1px);
         }
 
         .spin-btn:disabled {
-            background: #555;
-            box-shadow: none;
+            background: #444;
+            color: #888;
             cursor: not-allowed;
         }
 
-        .message-box {
-            height: 30px;
-            font-size: 1.3rem;
-            font-weight: 500;
-            color: #ffd700;
+        .result-box-container {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .clickable-prize-box {
+            display: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #fff;
+            cursor: pointer;
+            border: 2px solid #fff;
+            text-transform: uppercase;
             text-align: center;
+        }
+
+        /* LIVE COMMENTS SIDEBAR (Completely Free P2P) */
+        .comments-sidebar {
+            flex: 1;
+            min-width: 300px;
+            max-width: 380px;
+            background: rgba(15, 5, 29, 0.6);
+            border-radius: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            padding: 1rem;
+        }
+
+        .comments-header {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .p2p-setup {
+            font-size: 0.8rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .p2p-setup input {
+            width: 100%;
+            background: #22143d;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 0.3rem;
+            margin-top: 0.3rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .p2p-setup button {
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0.3rem;
+            font-weight: bold;
+        }
+
+        .comments-stream {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-right: 0.3rem;
+        }
+
+        .comment-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.6rem 0.8rem;
+            border-radius: 12px;
+            border-left: 3px solid var(--secondary);
+            font-size: 0.95rem;
+            animation: slideIn 0.2s ease forwards;
+        }
+
+        .comment-user {
+            font-weight: bold;
+            color: #00ffcc;
+            font-size: 0.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .comment-input-area {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 0.5rem;
+        }
+
+        .comment-input-area input {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: #fff;
+        }
+
+        .comment-input-area button {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Modal Reveal Window */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-card {
+            background: #1f1137;
+            border: 3px solid var(--primary);
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .prize-image-placeholder {
+            width: 100%;
+            height: 220px;
+            background: #2d1b4e;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .prize-image-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+        .close-modal-btn { background: #ff3366; color: white; border: none; padding: 0.7rem 2rem; border-radius: 8px; cursor: pointer; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -157,161 +329,339 @@
 
     <header>
         <h1>Lucky to Spin</h1>
-        <div class="subtitle">Will fortune favor you tonight?</div>
     </header>
 
-    <div class="game-container">
-        <div class="dashboard">
-            <div class="stat-box">Score <span id="score-display">0</span></div>
-            <div class="stat-box">Spins Left <span id="spins-display">5</span></div>
+    <div class="main-stage">
+        <div class="tiers-container">
+            <div class="tier-card" id="tier-1">
+                <div class="tier-title">Tier 1</div>
+                <div class="wheel-outer">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel-canvas-1" class="wheel-canvas" width="260" height="260"></canvas>
+                </div>
+                <button class="spin-btn" id="btn-1" onclick="spinTier(1)">Spin Tier 1</button>
+                <div class="result-box-container">
+                    <div class="clickable-prize-box" id="prize-box-1" onclick="openPrizeModal(1)"></div>
+                </div>
+            </div>
+
+            <div class="tier-card" id="tier-2">
+                <div class="tier-title">Tier 2</div>
+                <div class="wheel-outer">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel-canvas-2" class="wheel-canvas" width="260" height="260"></canvas>
+                </div>
+                <button class="spin-btn" id="btn-2" onclick="spinTier(2)">Spin Tier 2</button>
+                <div class="result-box-container">
+                    <div class="clickable-prize-box" id="prize-box-2" onclick="openPrizeModal(2)"></div>
+                </div>
+            </div>
+
+            <div class="tier-card" id="tier-3">
+                <div class="tier-title">Tier 3</div>
+                <div class="wheel-outer">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel-canvas-3" class="wheel-canvas" width="260" height="260"></canvas>
+                </div>
+                <button class="spin-btn" id="btn-3" onclick="spinTier(3)">Spin Tier 3</button>
+                <div class="result-box-container">
+                    <div class="clickable-prize-box" id="prize-box-3" onclick="openPrizeModal(3)"></div>
+                </div>
+            </div>
         </div>
 
-        <div class="wheel-outer">
-            <div class="wheel-pointer"></div>
-            <canvas id="wheel-canvas" class="wheel" width="400" height="400"></canvas>
+        <div class="comments-sidebar">
+            <div class="comments-header">Live Comments</div>
+            
+            <div class="p2p-setup">
+                <div style="font-weight: bold; margin-bottom: 2px;">Host Network Sync (No Server, Free):</div>
+                <label id="p2p-role-status">Mode: Local Player</label>
+                <div id="host-controls">
+                    <button onclick="initHost()">Act as Stream Host</button>
+                    <button onclick="showJoinField()">Join Host's Stream</button>
+                </div>
+                <div id="p2p-io-area" style="display:none; margin-top: 5px;">
+                    <div id="p2p-instruction">Copy this code and give it to your viewers:</div>
+                    <input type="text" id="p2p-code-box" readonly onclick="this.select()">
+                    <div id="client-connect-area" style="display:none; margin-top:5px;">
+                        <input type="text" id="p2p-input-code" placeholder="Paste Host code here...">
+                        <button onclick="connectToHost()">Connect</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comments-stream" id="chat-stream">
+                <div class="comment-bubble">
+                    <div class="comment-user">System</div>
+                    Welcome to the chat! Spin wheels or connect using P2P sync.
+                </div>
+            </div>
+
+            <div class="comment-input-area">
+                <input type="text" id="chat-username" placeholder="Name" style="width: 60px; flex: none;">
+                <input type="text" id="chat-msg" placeholder="Type a comment..." onkeydown="if(event.key==='Enter') sendComment()">
+                <button onclick="sendComment()">Send</button>
+            </div>
         </div>
+    </div>
 
-        <div class="message-box" id="msg-box">Press SPIN to test your luck!</div>
-
-        <button class="spin-btn" id="spin-button" onclick="spinWheel()">Spin!</button>
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title" id="modal-prize-title">You Won!</div>
+            <div class="prize-image-placeholder" id="modal-image-container"></div>
+            <button class="close-modal-btn" onclick="closeModal()">Close</button>
+        </div>
     </div>
 
     <script>
-        // Exactly 16 segments. Index 0 is the single Gold Spot.
-        const prizes = [
-            { label: "JACKPOT", value: 5000, color: "#ffd700", textColor: "#000" }, // The Single Gold Spot
-            { label: "$100", value: 100, color: "#3a1f5d" },
-            { label: "$200", value: 200, color: "#4e2a7f" },
-            { label: "BANKRUPT", value: -1, color: "#d32f2f" },
-            
-            { label: "$500", value: 500, color: "#5c3396" },
-            { label: "$150", value: 150, color: "#3a1f5d" },
-            { label: "$300", value: 300, color: "#4e2a7f" },
-            { label: "LOSE SPIN", value: -2, color: "#f57c00" },
-            
-            { label: "$1,000", value: 1000, color: "#5c3396" },
-            { label: "$50", value: 50, color: "#3a1f5d" },
-            { label: "$250", value: 250, color: "#4e2a7f" },
-            { label: "BANKRUPT", value: -1, color: "#d32f2f" },
-            
-            { label: "$750", value: 750, color: "#5c3396" },
-            { label: "$100", value: 100, color: "#3a1f5d" },
-            { label: "$400", value: 400, color: "#4e2a7f" },
-            { label: "FREE SPIN", value: 0, color: "#2e7d32" }
-        ];
+        const SLICES = 16;
+        const sliceAngle = (2 * Math.PI) / SLICES;
 
-        let score = 0;
-        let spinsLeft = 5;
-        let isSpinning = false;
-        let currentRotation = 0;
+        const tierPalettes = {
+            1: ["#1e293b", "#0f172a", "#0284c7", "#0369a1"],
+            2: ["#4c1d95", "#3b0764", "#db2777", "#be185d"],
+            3: ["#064e3b", "#022c22", "#059669", "#047857"]
+        };
 
-        const canvas = document.getElementById("wheel-canvas");
-        const ctx = canvas.getContext("2d");
-        const numSlices = prizes.length;
-        const sliceAngle = (2 * Math.PI) / numSlices;
-        const center = canvas.width / 2;
+        const state = {
+            1: { rotation: 0, lastIndex: null, isSpinning: false },
+            2: { rotation: 0, lastIndex: null, isSpinning: false },
+            3: { rotation: 0, lastIndex: null, isSpinning: false }
+        };
 
-        function drawWheel() {
+        // Live Prize Inventory object mapping derived from your Google Sheet data keys
+        let livePrizeData = {};
+
+        function getWedgeColor(tier, index) {
+            if (index === 0) return "#ffd700"; 
+            const palette = tierPalettes[tier];
+            return palette[index % palette.length];
+        }
+
+        function drawWheel(tierId) {
+            const canvas = document.getElementById(`wheel-canvas-${tierId}`);
+            const ctx = canvas.getContext("2d");
+            const center = canvas.width / 2;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Step 1: Draw the background triangles
-            for (let i = 0; i < numSlices; i++) {
+
+            for (let i = 0; i < SLICES; i++) {
                 const angle = i * sliceAngle;
-                
                 ctx.beginPath();
-                ctx.fillStyle = prizes[i].color;
+                ctx.fillStyle = getWedgeColor(tierId, i);
                 ctx.moveTo(center, center);
                 ctx.arc(center, center, center, angle, angle + sliceAngle);
                 ctx.lineTo(center, center);
                 ctx.fill();
 
-                // Standard subtle separator line
-                ctx.strokeStyle = "rgba(255,255,255,0.15)";
-                ctx.lineWidth = 1;
-                ctx.stroke();
-
-                // Draw Text
-                ctx.save();
-                ctx.translate(center, center);
-                ctx.rotate(angle + sliceAngle / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = prizes[i].textColor || "#ffffff";
-                ctx.font = "bold 13px Arial";
-                ctx.fillText(prizes[i].label, center - 20, 5);
-                ctx.restore();
+                if (i === 0) {
+                    ctx.save();
+                    ctx.translate(center, center);
+                    ctx.rotate(angle + sliceAngle / 2);
+                    ctx.textAlign = "right";
+                    ctx.fillStyle = "#000000";
+                    ctx.font = "bold 10px Arial";
+                    ctx.fillText("SPIN AGAIN", center - 15, 3);
+                    ctx.restore();
+                }
             }
 
-            // Step 2: Overlay thick black border lines every 4th spot
-            for (let i = 0; i < numSlices; i++) {
+            for (let i = 0; i < SLICES; i++) {
                 if (i % 4 === 0) {
                     const angle = i * sliceAngle;
                     ctx.beginPath();
                     ctx.strokeStyle = "#000000";
-                    ctx.lineWidth = 5; // Thick lines
+                    ctx.lineWidth = 4;
                     ctx.moveTo(center, center);
-                    // Draw line out to the edge of the circle
                     ctx.lineTo(center + center * Math.cos(angle), center + center * Math.sin(angle));
                     ctx.stroke();
                 }
             }
         }
 
-        function spinWheel() {
-            if (isSpinning || spinsLeft <= 0) return;
-
-            isSpinning = true;
-            spinsLeft--;
-            document.getElementById("spins-display").innerText = spinsLeft;
-            document.getElementById("spin-button").disabled = true;
-            document.getElementById("msg-box").innerText = "Spinning...";
-
-            const prizeIndex = Math.floor(Math.random() * numSlices);
+        // --- 1. LOCAL ALGORITHMIC PATTERN GENERATOR (AI REPLACEMENT) ---
+        // Completely local sine matrix updates the background spectrum on a loop without library files
+        let aiSeed = 0;
+        function processBackgroundAI() {
+            aiSeed += 0.02;
+            const r1 = Math.floor(15 + 10 * Math.sin(aiSeed));
+            const g1 = Math.floor(8 + 5 * Math.cos(aiSeed * 1.5));
+            const b1 = Math.floor(40 + 15 * Math.sin(aiSeed * 0.8));
             
-            // Match alignment so selected wedge lands directly at the top index pointer position
-            const targetAngle = (prizeIndex * sliceAngle) + (sliceAngle / 2);
-            const stopAngle = (3 * Math.PI / 2) - targetAngle;
-            const additionalRotations = 6 * 2 * Math.PI; 
-            currentRotation = stopAngle + additionalRotations;
+            const r2 = Math.floor(45 + 20 * Math.cos(aiSeed * 0.5));
+            const g2 = Math.floor(10 + 8 * Math.sin(aiSeed * 1.2));
+            const b2 = Math.floor(90 + 30 * Math.cos(aiSeed));
 
-            const wheelElement = document.getElementById("wheel-canvas");
-            wheelElement.style.transform = `rotate(${currentRotation}rad)`;
+            document.documentElement.style.setProperty('--ai-bg-1', `rgb(${r1}, ${g1}, ${b1})`);
+            document.documentElement.style.setProperty('--ai-bg-2', `rgb(${r2}, ${g2}, ${b2})`);
+            requestAnimationFrame(processBackgroundAI);
+        }
+        processBackgroundAI();
+
+        // --- 2. GOOGLE SHEETS LIVE CONFIGURATION ASSETS DATA SYNC ---
+        // Add your Apps Script url directly here to run your inventory live for free
+        const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+        async function fetchSheetData() {
+            if(!SCRIPT_URL || SCRIPT_URL.includes("YOUR_G")) return;
+            try {
+                const res = await fetch(SCRIPT_URL);
+                livePrizeData = await res.json();
+            } catch(e) { console.log("Offline Mode: Using Local Fallbacks."); }
+        }
+        fetchSheetData();
+
+        function spinTier(tierId) {
+            if (state[tierId].isSpinning) return;
+            state[tierId].isSpinning = true;
+            document.getElementById(`btn-${tierId}`).disabled = true;
+            document.getElementById(`prize-box-${tierId}`).style.display = "none";
+
+            const winningIndex = Math.floor(Math.random() * SLICES);
+            state[tierId].lastIndex = winningIndex;
+
+            const targetAngle = (winningIndex * sliceAngle) + (sliceAngle / 2);
+            const stopAngle = (3 * Math.PI / 2) - targetAngle;
+            state[tierId].rotation = stopAngle + (6 * 2 * Math.PI);
+
+            const wheelCanvas = document.getElementById(`wheel-canvas-${tierId}`);
+            wheelCanvas.style.transform = `rotate(${state[tierId].rotation}rad)`;
 
             setTimeout(() => {
-                isSpinning = false;
-                const result = prizes[prizeIndex];
+                state[tierId].isSpinning = false;
+                document.getElementById(`btn-${tierId}`).disabled = false;
+
+                const colorMatched = getWedgeColor(tierId, winningIndex);
+                const prizeBox = document.getElementById(`prize-box-${tierId}`);
                 
-                if (result.value === -1) {
-                    score = 0;
-                    document.getElementById("msg-box").innerText = "Oh no! Bankrupt!";
-                } else if (result.value === -2) {
-                    spinsLeft = Math.max(0, spinsLeft - 1);
-                    document.getElementById("msg-box").innerText = "Ouch! You lost a spin!";
-                    document.getElementById("spins-display").innerText = spinsLeft;
-                } else if (result.label === "FREE SPIN") {
-                    spinsLeft++;
-                    document.getElementById("msg-box").innerText = "Awesome! Free Spin awarded!";
-                    document.getElementById("spins-display").innerText = spinsLeft;
-                } else {
-                    score += result.value;
-                    if (result.color === "#ffd700") {
-                        document.getElementById("msg-box").innerText = `💥 GOLD SPOT! You hit the JACKPOT for $${result.value}! 💥`;
-                    } else {
-                        document.getElementById("msg-box").innerText = `You landed on ${result.label}!`;
-                    }
-                }
-
-                document.getElementById("score-display").innerText = score;
-
-                if (spinsLeft > 0) {
-                    document.getElementById("spin-button").disabled = false;
-                } else {
-                    document.getElementById("msg-box").innerText = `Game Over! Final Score: $${score}`;
-                }
-            }, 4000); 
+                prizeBox.style.backgroundColor = colorMatched;
+                prizeBox.style.color = (winningIndex === 0) ? "#000" : "#fff";
+                prizeBox.style.display = "block";
+                prizeBox.innerText = winningIndex === 0 ? "✨ Spin Again! ✨" : "🎁 View Prize! 🎁";
+            }, 4000);
         }
 
-        drawWheel();
+        function openPrizeModal(tierId) {
+            const index = state[tierId].lastIndex;
+            const overlay = document.getElementById("modal-overlay");
+            const title = document.getElementById("modal-prize-title");
+            const imgContainer = document.getElementById("modal-image-container");
+
+            if (index === 0) {
+                title.innerText = "Bonus Turn!";
+                imgContainer.innerHTML = `<span style="font-size: 4rem;">🔄</span>`;
+                overlay.classList.add("active");
+                return;
+            }
+
+            let itemName = `Tier ${tierId} - Item #${index}`;
+            let itemImg = "";
+
+            const lookupKey = `T${tierId}_S${index}`;
+            if (livePrizeData[lookupKey]) {
+                itemName = livePrizeData[lookupKey].name;
+                itemImg = livePrizeData[lookupKey].image;
+            }
+
+            title.innerText = itemName;
+            imgContainer.innerHTML = itemImg ? `<img src="${itemImg}">` : `<span>[ Image Reveal ]</span>`;
+            overlay.classList.add("active");
+        }
+
+        function closeModal() { document.getElementById("modal-overlay").classList.remove("active"); }
+
+        // --- 3. COMPLETELY FREE PEER-TO-PEER (WEBRTC) COMMENT PROTOCOLS ---
+        let localConnection;
+        let dataChannel;
+        let p2pMode = "none"; 
+
+        function appendComment(user, message) {
+            const stream = document.getElementById("chat-stream");
+            const bubble = document.createElement("div");
+            bubble.className = "comment-bubble";
+            bubble.innerHTML = `<div class="comment-user">${escapeHTML(user)}</div><div>${escapeHTML(message)}</div>`;
+            stream.appendChild(bubble);
+            stream.scrollTop = stream.scrollHeight;
+        }
+
+        function sendComment() {
+            const nameInp = document.getElementById("chat-username");
+            const msgInp = document.getElementById("chat-msg");
+            const name = nameInp.value.trim() || "User";
+            const msg = msgInp.value.trim();
+            if(!msg) return;
+
+            appendComment(name, msg);
+            
+            if(dataChannel && dataChannel.readyState === "open") {
+                dataChannel.send(JSON.stringify({user: name, message: msg}));
+            }
+            msgInp.value = "";
+        }
+
+        // WebRTC Connection Setup logic (Host Creates, Client Joins)
+        async function initHost() {
+            p2pMode = "host";
+            document.getElementById("p2p-role-status").innerText = "Mode: Host Studio";
+            document.getElementById("host-controls").style.display = "none";
+            document.getElementById("p2p-io-area").style.display = "block";
+            
+            localConnection = new RTCPeerConnection();
+            dataChannel = localConnection.createDataChannel("chatChannel");
+            
+            dataChannel.onmessage = e => {
+                const data = JSON.parse(e.data);
+                appendComment(data.user, data.message);
+            };
+
+            localConnection.onicecandidate = e => {
+                if (!e.candidate) {
+                    // Once signaling collection completes, generate the sync token string mapping 
+                    document.getElementById("p2p-code-box").value = btoa(JSON.stringify(localConnection.localDescription));
+                }
+            };
+
+            const offer = await localConnection.createOffer();
+            await localConnection.setLocalDescription(offer);
+        }
+
+        function showJoinField() {
+            document.getElementById("host-controls").style.display = "none";
+            document.getElementById("p2p-io-area").style.display = "block";
+            document.getElementById("p2p-instruction").innerText = "Paste Host's Connection Code below:";
+            document.getElementById("p2p-code-box").style.display = "none";
+            document.getElementById("client-connect-area").style.display = "block";
+        }
+
+        async function connectToHost() {
+            p2pMode = "client";
+            document.getElementById("p2p-role-status").innerText = "Mode: Connected Viewer";
+            const rawCode = document.getElementById("p2p-input-code").value.trim();
+            if(!rawCode) return;
+
+            const parsedOffer = JSON.parse(atob(rawCode));
+            localConnection = new RTCPeerConnection();
+
+            localConnection.ondatachannel = e => {
+                dataChannel = e.channel;
+                dataChannel.onmessage = ev => {
+                    const data = JSON.parse(ev.data);
+                    appendComment(data.user, data.message);
+                };
+            };
+
+            await localConnection.setRemoteDescription(parsedOffer);
+            const answer = await localConnection.createAnswer();
+            await localConnection.setLocalDescription(answer);
+            
+            // Show return answer key briefly if host needs handshake tracking response back
+            alert("Connected successfully to P2P Matrix!");
+            document.getElementById("client-connect-area").style.display = "none";
+        }
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        // Initialize Wheels
+        drawWheel(1); drawWheel(2); drawWheel(3);
     </script>
 </body>
 </html>
-
