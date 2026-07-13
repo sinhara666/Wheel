@@ -3,170 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Triple Wheel Game</title>
-  <style>
-    /* Visual Styling & Interface */
-    body { background: #121214; margin: 0; padding: 20px; }
-    .game-wrapper { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #1c1c1e; color: #fff; padding: 30px; border-radius: 16px; max-width: 1000px; margin: 20px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-    .triple-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin-top: 20px; }
-    .wheel-box { position: relative; width: 260px; text-align: center; background: #2c2c2e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    .arrow { font-size: 26px; color: #ff3b30; line-height: 1; margin-bottom: -2px; z-index: 5; position: relative; }
-
-    /* The 16 Sections (4 Large Quarters) */
-    .wheel-graphic {
-      width: 220px; height: 220px; border-radius: 50%; border: 6px solid #fff; margin: 0 auto; position: relative;
-      background: conic-gradient(
-        /* Q1 */ #ff3b30 0deg 22.5deg, #ff9500 22.5deg 45deg, #ffcc00 45deg 67.5deg, #4cd964 67.5deg 90deg,
-        /* Q2 */ #5ac8fa 90deg 112.5deg, #007aff 112.5deg 135deg, #5856d6 135deg 157.5deg, #ff2d55 157.5deg 180deg,
-        /* Q3 */ #00d2d3 180deg 202.5deg, #1dd1a1 202.5deg 225deg, #ff6b6b 225deg 247.5deg, #feca57 247.5deg 270deg,
-        /* Q4 - Special Gold Spot */ #5f27cd 270deg 292.5deg, #54a0ff 292.5deg 315deg, #00d2d3 315deg 337.5deg, #ffd700 337.5deg 360deg
-      );
-      transition: transform 4.5s cubic-bezier(0.1, 0.8, 0.1, 1);
-    }
-
-    .spin-btn { margin-top: 20px; padding: 10px 20px; font-weight: bold; background: #ffd700; color: #000; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; width: 100%; }
-    .spin-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
-
-    /* Box Selection Pop-Out Overlay */
-    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 100; opacity: 0; transition: opacity 0.4s ease; }
-    .modal-overlay.active { display: flex; opacity: 1; }
-    .modal-content { background: #2c2c2e; padding: 30px; border-radius: 16px; max-width: 600px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; color: white; }
-    .boxes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 25px 0; }
-
-    /* Mystery Box Growth Styles */
-    .prize-box { height: 140px; border-radius: 12px; cursor: pointer; position: relative; perspective: 1000px; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .modal-overlay.active .prize-box { transform: scale(1); }
-
-    /* Sequential Stagger Entry Delays */
-    .prize-box:nth-child(1) { transition-delay: 0.1s; }
-    .prize-box:nth-child(2) { transition-delay: 0.2s; }
-    .prize-box:nth-child(3) { transition-delay: 0.3s; }
-    .prize-box:nth-child(4) { transition-delay: 0.4s; }
-
-    /* Flip Reveal Mechanics */
-    .box-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
-    .prize-box.opened .box-inner { transform: rotateY(180deg); }
-    .box-front, .box-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #fff; box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
-
-    /* Closed Face Setup */
-    .box-front { border: 3px solid rgba(255,255,255,0.4); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-    .box-front::after { content: '🎁'; font-size: 32px; margin-top: 5px; }
-
-    /* Image Unveil Setup */
-    .box-back { transform: rotateY(180deg); background: #121214; border: 3px solid #ffd700; overflow: hidden; }
-    .box-back img { width: 100%; height: 100%; object-fit: cover; }
-    .close-btn { padding: 10px 20px; background: #ff3b30; color: #fff; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
-  </style>
+  <title>Lucky AI Spin - Live Game Show</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="game-wrapper">
-    <h2>The Ultimate Triple Wheel Game</h2>
+  <div class="stage-wrapper">
+    <h1 class="game-title">Lucky AI Spin</h1>
+    <div class="game-subtitle">Digital Product Edition</div>
     
-    <div class="triple-container">
-      <!-- WHEEL 1 -->
-      <div class="wheel-box">
-        <h3>Wheel 1</h3>
-        <div class="arrow">▼</div>
-        <div class="wheel-graphic" id="w1"></div>
-        <button class="spin-btn" id="btn-w1" onclick="spinWheel('w1')">Spin Wheel 1</button>
+    <div class="podium-grid">
+      <!-- TIER 1 WHEEL ($25) -->
+      <div class="wheel-podium style-w1">
+        <h3 class="tier-header tier-1-color">Tier 1</h3>
+        <div class="tier-value">$25 Digital Assets</div>
+        <div class="ticker-pin">▼</div>
+        <div class="wheel-container">
+          <svg class="wheel-svg" id="w1" viewBox="0 0 200 200"></svg>
+          <div class="center-cap"></div>
+        </div>
+        <button class="spin-button" id="btn-w1" onclick="spinEngine('w1')">Spin Tier 1</button>
       </div>
 
-      <!-- WHEEL 2 -->
-      <div class="wheel-box">
-        <h3>Wheel 2</h3>
-        <div class="arrow">▼</div>
-        <div class="wheel-graphic" id="w2"></div>
-        <button class="spin-btn" id="btn-w2" onclick="spinWheel('w2')">Spin Wheel 2</button>
+      <!-- TIER 2 WHEEL ($75) -->
+      <div class="wheel-podium style-w2">
+        <h3 class="tier-header tier-2-color">Tier 2</h3>
+        <div class="tier-value">$75 Premium Bundles</div>
+        <div class="ticker-pin">▼</div>
+        <div class="wheel-container">
+          <svg class="wheel-svg" id="w2" viewBox="0 0 200 200"></svg>
+          <div class="center-cap"></div>
+        </div>
+        <button class="spin-button" id="btn-w2" onclick="spinEngine('w2')">Spin Tier 2</button>
       </div>
 
-      <!-- WHEEL 3 -->
-      <div class="wheel-box">
-        <h3>Wheel 3</h3>
-        <div class="arrow">▼</div>
-        <div class="wheel-graphic" id="w3"></div>
-        <button class="spin-btn" id="btn-w3" onclick="spinWheel('w3')">Spin Wheel 3</button>
+      <!-- TIER 3 WHEEL ($299) -->
+      <div class="wheel-podium style-w3">
+        <h3 class="tier-header tier-3-color">Tier 3</h3>
+        <div class="tier-value">$299 Mega Courses</div>
+        <div class="ticker-pin">▼</div>
+        <div class="wheel-container">
+          <svg class="wheel-svg" id="w3" viewBox="0 0 200 200"></svg>
+          <div class="center-cap"></div>
+        </div>
+        <button class="spin-button" id="btn-w3" onclick="spinEngine('w3')">Spin Tier 3</button>
       </div>
     </div>
   </div>
 
-  <!-- POP-UP OVERLAY FOR CLOSED BOXES -->
+  <!-- MYSTERY ITEM MODAL SELECTION DISPLAY -->
   <div class="modal-overlay" id="boxModal">
-    <div class="modal-content">
-      <h2 id="modalTitle">Mystery Boxes Approaching!</h2>
-      <p>Tap a box one by one to crack it open and reveal your prize.</p>
+    <div class="modal-content" id="modalFrame">
+      <h2 id="modalTitle">Section Unlocked!</h2>
+      <p>Open your digital mystery packages one by one:</p>
       <div class="boxes-grid" id="boxesGrid"></div>
-      <button class="close-btn" onclick="closeModal()">Back to Wheels</button>
+      <button class="close-btn" onclick="closeModal()">Next Round</button>
     </div>
   </div>
 
-  <script>
-    // Images linked to the 4 Quarters. Swap the placeholder URLs below with your own images!
-    const quarterData = {
-      Q1: { name: "Quarter 1", colors: ["#ff3b30", "#ff9500", "#ffcc00", "#4cd964"], imgs: ["https://picsum.photos", "https://picsum.photos", "https://picsum.photos", "https://picsum.photos"] },
-      Q2: { name: "Quarter 2", colors: ["#5ac8fa", "#007aff", "#5856d6", "#ff2d55"], imgs: ["https://picsum.photos", "https://picsum.photos", "https://picsum.photos", "https://picsum.photos"] },
-      Q3: { name: "Quarter 3", colors: ["#00d2d3", "#1dd1a1", "#ff6b6b", "#feca57"], imgs: ["https://picsum.photos", "https://picsum.photos0", "https://picsum.photos1", "https://picsum.photos2"] },
-      Q4: { name: "Quarter 4 (Gold)", colors: ["#5f27cd", "#54a0ff", "#00d2d3", "#ffd700"], imgs: ["https://picsum.photos3", "https://picsum.photos4", "https://picsum.photos5", "https://picsum.photos6"] }
-    };
-
-    let trackingRotations = { w1: 0, w2: 0, w3: 0 };
-
-    function spinWheel(id) {
-      const wheel = document.getElementById(id);
-      const btn = document.getElementById('btn-' + id);
-      btn.disabled = true;
-      
-      const additionalSpins = Math.floor(2160 + Math.random() * 1440);
-      trackingRotations[id] += additionalSpins;
-      
-      wheel.style.transform = `rotate(${trackingRotations[id]}deg)`;
-      
-      setTimeout(() => {
-        const netDegrees = trackingRotations[id] % 360;
-        const pointedDegrees = (360 - netDegrees) % 360;
-        
-        let landedQuarter = "Q1";
-        if (pointedDegrees >= 0 && pointedDegrees < 90) landedQuarter = "Q1";
-        else if (pointedDegrees >= 90 && pointedDegrees < 180) landedQuarter = "Q2";
-        else if (pointedDegrees >= 180 && pointedDegrees < 270) landedQuarter = "Q3";
-        else landedQuarter = "Q4";
-        
-        openBoxModal(landedQuarter);
-        btn.disabled = false;
-      }, 4600);
-    }
-
-    function openBoxModal(quarterKey) {
-      const data = quarterData[quarterKey];
-      document.getElementById('modalTitle').innerText = `Landed on ${data.name}!`;
-      const grid = document.getElementById('boxesGrid');
-      grid.innerHTML = ""; 
-      
-      data.colors.forEach((color, index) => {
-        const box = document.createElement('div');
-        box.className = 'prize-box';
-        box.onclick = () => box.classList.toggle('opened');
-        box.innerHTML = `
-          <div class="box-inner">
-            <div class="box-front" style="background: ${color};">Box ${index + 1}</div>
-            <div class="box-back"><img src="${data.imgs[index]}" alt="Prize Visual"></div>
-          </div>
-        `;
-        grid.appendChild(box);
-      });
-      
-      const modal = document.getElementById('boxModal');
-      modal.style.display = 'flex';
-      setTimeout(() => modal.classList.add('active'), 10);
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('boxModal');
-      modal.classList.remove('active');
-      setTimeout(() => modal.style.display = 'none', 400);
-    }
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
 
