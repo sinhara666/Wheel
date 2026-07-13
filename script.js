@@ -1,138 +1,90 @@
-// Color layouts mapping
-const wheelThemes = {
-  w1: {
-    Q1: ["#00f0ff", "#00d0ef", "#00b0df", "#0090cf"],
-    Q2: ["#39ff14", "#2ecc71", "#27ae60", "#1e824c"],
-    Q3: ["#ff007f", "#e6194b", "#c51130", "#990011"],
-    Q4: ["#ff9f43", "#f39c12", "#e67e22", "#d35400"]
-  },
-  w2: {
-    Q1: ["#9b5de5", "#8338ec", "#7209b7", "#560bad"],
-    Q2: ["#f15bb5", "#ff006e", "#d90429", "#a60000"],
-    Q3: ["#00f5d4", "#00bbf9", "#0096c7", "#03045e"],
-    Q4: ["#ffea00", "#ffcc00", "#ffa600", "#ff7b00"]
-  },
-  w3: {
-    Q1: ["#a8ff78", "#78ffd6", "#4ca1af", "#2c3e50"],
-    Q2: ["#fd746c", "#ff9068", "#f12711", "#f5af19"],
-    Q3: ["#6441a5", "#2a0845", "#41295a", "#2F0743"],
-    Q4: ["#45aaf2", "#2d98da", "#3a3a5c", "#ffd700"] // Special Gold Spot Slot
-  }
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+// 1. THE AUTOMATED DIGITAL LINE (QUEUE ARRAY)
+let spinQueue = [];
+
+// Track whatever is currently taking place live on stream
+let activeLiveGameSession = {
+  currentAuthorizedUser: "No Active Spin",
+  unlockedTier: "w1", 
+  canSpin: false,
+  queueCount: 0
 };
 
-const productPrizes = [
-  "https://picsum.photos", 
-  "https://picsum.photos", 
-  "https://picsum.photos", 
-  "https://picsum.photos"
-];
+// 2. INBOUND WHOP PAYMENTS WEBHOOK RECEIVER
+app.post('/api/whop-webhook', (req, res) => {
+  const incomingEvent = req.body;
+  
+  if (incomingEvent.action === 'payment.succeeded') {
+    const paymentData = incomingEvent.data;
+    const userEmail = paymentData.email;
+    const purchasedPlanId = paymentData.plan_id;
 
-let spinLogs = { w1: 0, w2: 0, w3: 0 };
+    console.log(`📥 Webhook Received: Payment from ${userEmail}. Pushing them into the line array.`);
 
-function buildGameWheels() {
-  ["w1", "w2", "w3"].forEach(id => {
-    const svg = document.getElementById(id);
-    let slicesHTML = "";
-    const theme = wheelThemes[id];
-    const masterColors = [...theme.Q1, ...theme.Q2, ...theme.Q3, ...theme.Q4];
+    // Match the Plan ID to your specific tier layout settings
+    let assignedTier = "w1";
+    if (purchasedPlanId === 'plan_XYZ789_tier2') assignedTier = "w2";
+    if (purchasedPlanId === 'plan_GOLD999_tier3') assignedTier = "w3";
+
+    // PUSH THE PLAYER INTO THE LINE ARRAY
+    spinQueue.push({
+      email: userEmail,
+      tier: assignedTier
+    });
+
+    // Check if the machine is idling, if so, process this player instantly
+    if (!activeLiveGameSession.canSpin) {
+      advanceToNextPlayerInQueue();
+    }
+
+    return res.status(200).json({ status: "queued", position: spinQueue.length });
+  }
+
+  res.status(200).send("Event acknowledged");
+});
+
+// 3. INTERNAL MACHINE SWITCHER ENGINE
+function advanceToNextPlayerInQueue() {
+  if (spinQueue.length > 0) {
+    // Take the very first person out of the line (First In, First Out logic)
+    const nextContestant = spinQueue.shift(); 
     
-    // Draw slices cleanly with no interior dividing borders
-    for (let s = 0; s < 16; s++) {
-      const angleStart = s * 22.5;
-      const angleEnd = (s + 1) * 22.5;
-      
-      const radStart = (angleStart - 90) * Math.PI / 180;
-      const radEnd = (angleEnd - 90) * Math.PI / 180;
-      
-      const x1 = 100 + 100 * Math.cos(radStart);
-      const y1 = 100 + 100 * Math.sin(radStart);
-      const x2 = 100 + 100 * Math.cos(radEnd);
-      const y2 = 100 + 100 * Math.sin(radEnd);
-      
-      slicesHTML += `
-        <path d="M 100 100 L ${x1} ${y1} A 100 100 0 0 1 ${x2} ${y2} Z" 
-              fill="${masterColors[s]}" 
-              stroke="none"/>
-      `;
-    }
-
-    // Draw the 4 bold black dividing borders explicitly between quarters
-    for (let q = 0; q < 4; q++) {
-      const quarterAngle = q * 90;
-      const radQuarter = (quarterAngle - 90) * Math.PI / 180;
-      const xLine = 100 + 100 * Math.cos(radQuarter);
-      const yLine = 100 + 100 * Math.sin(radQuarter);
-
-      slicesHTML += `
-        <line x1="100" y1="100" x2="${xLine}" y2="${yLine}" 
-              stroke="#000000" stroke-width="4" stroke-linecap="round"/>
-      `;
-    }
-    svg.innerHTML = slicesHTML;
-  });
+    activeLiveGameSession.currentAuthorizedUser = nextContestant.email;
+    activeLiveGameSession.unlockedTier = nextContestant.tier;
+    activeLiveGameSession.canSpin = true;
+    activeLiveGameSession.queueCount = spinQueue.length;
+    
+    console.log(`🎯 Next up: ${nextContestant.email} on wheel tier: ${nextContestant.tier}`);
+  } else {
+    // If the line is empty, lock the controls down and wait for a payment
+    activeLiveGameSession.currentAuthorizedUser = "No Active Spin";
+    activeLiveGameSession.canSpin = false;
+    activeLiveGameSession.queueCount = 0;
+    console.log("💤 Game show line is currently empty. Awaiting new payments...");
+  }
 }
 
-function spinEngine(id) {
-  const wheel = document.getElementById(id);
-  const btn = document.getElementById('btn-' + id);
-  btn.disabled = true;
+// 4. FRONTEND SYNC ENDPOINT (POLLING ROUTE)
+app.get('/api/current-game-state', (req, res) => {
+  res.json(activeLiveGameSession);
+});
+
+// 5. CONSUME SIGNAL: TRIGGERED FROM FRONTEND SCRIPT RIGHT WHEN SPIN STARTS
+app.post('/api/consume-spin', (req, res) => {
+  // Lock the button down immediately so nobody can spam it
+  activeLiveGameSession.canSpin = false;
   
-  const degreesToTurn = Math.floor(2160 + Math.random() * 1440);
-  spinLogs[id] += degreesToTurn;
-  
-  wheel.style.transform = `rotate(${spinLogs[id]}deg)`;
-  
+  // Wait 12 seconds for the spin animation to complete and the player to click open boxes
+  // Then automatically shift to the next player waiting in the line!
   setTimeout(() => {
-    const absoluteDegrees = spinLogs[id] % 360;
-    const needleAngle = (360 - absoluteDegrees) % 360;
-    
-    let targetQuarter = "Q1";
-    if (needleAngle >= 0 && needleAngle < 90) targetQuarter = "Q1";
-    else if (needleAngle >= 90 && needleAngle < 180) targetQuarter = "Q2";
-    else if (needleAngle >= 180 && needleAngle < 270) targetQuarter = "Q3";
-    else targetQuarter = "Q4";
-    
-    launchBoxPresentation(id, targetQuarter);
-    btn.disabled = false;
-  }, 4800);
-}
+    advanceToNextPlayerInQueue();
+  }, 12000); 
 
-function launchBoxPresentation(wheelId, quarterKey) {
-  const targetDataset = wheelThemes[wheelId][quarterKey];
-  const frame = document.getElementById('modalFrame');
-  
-  if(wheelId === "w1") frame.style.borderColor = "#00ffff";
-  else if(wheelId === "w2") frame.style.borderColor = "#ff007f";
-  else frame.style.borderColor = "#ffd700";
+  res.json({ status: "processing_spin" });
+});
 
-  document.getElementById('modalTitle').innerText = `${quarterKey === "Q4" && wheelId === "w3" ? "🏆 GOLD JACKPOT UNLOCKED!" : "Section Cleared!"}`;
-  
-  const grid = document.getElementById('boxesGrid');
-  grid.innerHTML = ""; 
-  
-  targetDataset.forEach((color, index) => {
-    const box = document.createElement('div');
-    box.className = 'prize-box';
-    box.onclick = () => box.classList.toggle('opened');
-    box.innerHTML = `
-      <div class="box-inner">
-        <div class="box-front" style="background: ${color};">Item ${index + 1}</div>
-        <div class="box-back"><img src="${productPrizes[index]}" alt="Prize Visual"></div>
-      </div>
-    `;
-    grid.appendChild(box);
-  });
-  
-  const modal = document.getElementById('boxModal');
-  modal.style.display = 'flex';
-  setTimeout(() => modal.classList.add('active'), 10);
-}
-
-function closeModal() {
-  const modal = document.getElementById('boxModal');
-  modal.classList.remove('active');
-  setTimeout(() => modal.style.display = 'none', 400);
-}
-
-window.onload = buildGameWheels;
+app.listen(3000, () => console.log('Lucky AI Spin Automated Queue Engine online on port 3000!'));
 
