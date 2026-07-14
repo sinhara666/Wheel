@@ -2,36 +2,33 @@
 let totalRotationDegrees = { w1: 0, w2: 0, w3: 0 };
 
 // 🌟 THEMES FIXED: 12 COMPLETELY DIFFERENT COLORS ACROSS THE ENTIRE STAGE (NO OVERLAPS)
-const wheelThemes = {
-  w1: {
-    border: "#00ffff",
-    // Wheel 1 Colors: Pink, Teal, Purple, Light Green
-    slices: [
-      "#ff007f", "#ff007f", "#ff007f", "#ff007f", // Quarter 1 (Slices 1-4)
-      "#00e5ff", "#00e5ff", "#00e5ff", "#00e5ff", // Quarter 2 (Slices 5-8)
-      "#9b5de5", "#9b5de5", "#9b5de5", "#9b5de5", // Quarter 3 (Slices 9-12)
-      "#00ff66", "#00ff66", "#00ff66", "#00ff66"  // Quarter 4 (Slices 13-16)
-    ]
+const wheel1Colors = [
+  '#FF2D55', '#FF3B30', '#00C7BE', // Section 1: Pink, Red, Teal
+  '#00C7BE', '#28A745', '#FF2D55', // Section 2: Teal, Green, Pink
+  '#FF3B30', '#FFD700', '#6F42C1', // Section 3: Red, Gold (Jackpot), Purple
+  '#6F42C1', '#28A745', '#FF2D55'  // Section 4: Purple, Green, Pink
+];
+
   },
   w2: {
     border: "#ff007f",
-    // Wheel 2 Colors: Bright Red, Brilliant Gold, Electric Blue, Hot Orange
-    slices: [
-      "#ff3333", "#ff3333", "#ff3333", "#ff3333", // Quarter 1 (Slices 1-4)
-      "#ffd700", "#ffd700", "#ffd700", "#ffd700", // Quarter 2 (Slices 5-8)
-      "#0066ff", "#0066ff", "#0066ff", "#0066ff", // Quarter 3 (Slices 9-12)
-      "#ff6600", "#ff6600", "#ff6600", "#ff6600"  // Quarter 4 (Slices 13-16)
-    ]
+const wheel2Colors = [
+  '#196E2E', '#FFD700', '#4B2A85', // Section 1: Dark Green, Gold (Jackpot), Dark Purple
+  '#0051A8', '#B31A37', '#B3241B', // Section 2: Ocean Blue, Shaded Pink, Crimson Red
+  '#B3241B', '#0051A8', '#196E2E', // Section 3: Crimson Red, Ocean Blue, Dark Green
+  '#4B2A85', '#B31A37', '#B3241B'  // Section 4: Dark Purple, Shaded Pink, Crimson Red
+];
+    
   },
   w3: {
     border: "#ffd700",
-    // Wheel 3 Colors: Deep Magenta, Acid Lemon Yellow, Electric Cyan, Neon Violet
-    slices: [
-      "#cc00ff", "#cc00ff", "#cc00ff", "#cc00ff", // Quarter 1 (Slices 1-4)
-      "#ccff00", "#ccff00", "#ccff00", "#ccff00", // Quarter 2 (Slices 5-8)
-      "#00ffff", "#00ffff", "#00ffff", "#00ffff", // Quarter 3 (Slices 9-12)
-      "#7300e6", "#7300e6", "#7300e6", "#7300e6"  // Quarter 4 (Slices 13-16)
-    ]
+    const wheel3Colors = [
+  '#66120E', '#0A3314', '#040E1C', // Section 1: Onyx Red, Deep Moss, Midnight Navy
+  '#040E1C', '#FFD700', '#540A24', // Section 2: Midnight Navy, Gold (Jackpot), Dark Pink
+  '#2C0D52', '#540A24', '#040E1C', // Section 3: Shadow Purple, Dark Pink, Midnight Navy
+  '#0A3314', '#040E1C', '#2C0D52'  // Section 4: Deep Moss, Midnight Navy, Shadow Purple
+];
+    
   }
 };
 
